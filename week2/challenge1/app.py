@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask,render_template
+from flask import Flask,render_template,abort
 import os
 import json
 
@@ -27,4 +27,14 @@ def index():
 def file(filename):
     #读取并显示filename.json中的文章内容
     # 如果文章不存在,则显示包含字符串shiyanlou 404的404错误页面
-    pass
+    if not os.path.isfile('./files/%s.json' % filename):
+        abort(404)
+    with open('./files/%s.json' % filename,'r') as f:
+        spamjson = json.load(f)
+        content = spamjson['content']
+    return render_template('file.html',content=content)
+
+@app.errorhandler(404)
+def not_found(error):
+    error_message = 'shiyanlou 404'
+    return render_template('404.html',error_message=error_message),404
