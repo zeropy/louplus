@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+   {% for file in files %}
+   <p> <a href="/files/{{ file.id  }}"> {{ file.title }} </a>  <span>{{ file.tags }} </span></p>
+   {% endfor %}   
+
+  </body>
+</html>
