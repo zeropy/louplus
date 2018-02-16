@@ -15,7 +15,7 @@ class Config(object):
         self.scioal_insurance_rate = self._scioal_insurance_rate(conf)
 
     def _scioal_insurance_rate(self,conf):
-        scioal_insurance_type = ['YangLao','YiLao','GongShang','ShiYe','ShengYu','GongJiJin']
+        scioal_insurance_type = ['YangLao','YiLiao','GongShang','ShiYe','ShengYu','GongJiJin']
         scioal_insurance_rate = 0
         with open(conf,'r') as f:
             for line in f:
