@@ -70,7 +70,7 @@ class Calculator(object):
                 return None
             if taxable_part > taxinfo.taxable_part:
                 self.salay_of_tax = taxable_part * taxinfo.taxrate - taxinfo.deduction
-                self.salay_after_tax = salay - self.salay_of_tax
+                self.salay_after_tax = salay - self.salay_of_tax - self.salay_of_scioal
                 return None
 
 
