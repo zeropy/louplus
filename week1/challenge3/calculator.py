@@ -82,7 +82,7 @@ class Export(object):
     def _writefile(self,c,outfile):
         with open(outfile,'a') as f:
             spamwriter = csv.writer(f,delimiter=',')
-            row = [c.number,"c.salay,"%.2f" % c.salay_of_scioal,"%.2f" % c.salay_of_tax,"%.2f" % c.salay_after_tax]
+            row = [c.number,c.salay,"%.2f" % c.salay_of_scioal,"%.2f" % c.salay_of_tax,"%.2f" % c.salay_after_tax]
             spamwriter.writerow(row)
 
 if __name__ == '__main__':
