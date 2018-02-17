@@ -25,6 +25,7 @@ def get_rank(user_id):
     all_data = [x for x in contests.aggregate(pipeline)]
 
     rank = 0
+    submit_time = 0
     for udata in all_data:
         rank += 1
         if user_id == udata['_id']:
@@ -32,6 +33,9 @@ def get_rank(user_id):
             submit_time = udata['submit_time']
             break
 
+    if submit_time == 0:
+        print('NOTFOUND')
+        return None
     # 依次返回排名,分数和时间,不能修改排序
     return rank, score, submit_time
 
@@ -49,4 +53,5 @@ if __name__ == '__main__':
 
     # 根据用户 ID 获取用户排名,分数和时间
     userdata = get_rank(user_id)
-    print(userdata)
+    if userdata:
+        print(userdata)
