@@ -3,14 +3,15 @@
 from openpyxl import load_workbook
 from openpyxl import Workbook
 import datetime
+import sys
 
-def combine():
+def combine(srcfile):
     '''
     该函数可以处理原数据文件:
     1. 合并表格并写入的 combine 表中
     2. 保存原数据文件
     '''
-    wb = load_workbook(filename='courses.xlsx')
+    wb = load_workbook(filename=srcfile)
     sheet_students = wb['students']
     sheet_time = wb['time']
 
@@ -51,17 +52,17 @@ def combine():
         t = [students_dict[k][0], k, students_dict[k][1], students_dict[k][2]]
         sheet_combine.append(t)
 
-    wb.save(filename='courses.xlsx')
+    wb.save(filename=srcfile)
 
 
-def split():
+def split(srcfile):
     '''
     该函数可以分割文件:
     1. 读取 combine 表中的数据
     2. 写入不同的数据表中
     '''
     data_dict = {}
-    wb_course = load_workbook(filename='courses.xlsx')
+    wb_course = load_workbook(filename=srcfile)
     sheet_combine = wb_course['combine']
 
     for row in sheet_combine.iter_rows(min_row=2):
@@ -84,5 +85,10 @@ def split():
 
 # 执行
 if __name__ == '__main__':
-    combine()
-    split()
+    try:
+        srcfile = sys.argv[1]
+    except IndexError:
+        print('Parameter Error')
+        sys.exit(1)
+    combine(srcfile)
+    split(srcfile)
