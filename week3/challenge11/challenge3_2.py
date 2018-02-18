@@ -41,12 +41,17 @@ def combine(srcfile):
         #print(row[learn_time].value)
 
     # 写入 combine 表中
-    if not wb['combine']:
-        sheet_combine = wb.create_sheet(title='combine')
-    else:
+    #if not wb['combine']:
+    #else:
+    #    sheet_combine = wb['combine']
+    #    wb.remove(sheet_combine)
+    #    sheet_combine = wb.create_sheet(title='combine')
+    try:
         sheet_combine = wb['combine']
         wb.remove(sheet_combine)
-        sheet_combine = wb.create_sheet(title='combine')
+    except:
+        pass
+    sheet_combine = wb.create_sheet(title='combine')
     sheet_combine.append(['创建时间','课程名称','学习人数','学习时间'])
     for k in students_dict.keys():
         t = [students_dict[k][0], k, students_dict[k][1], students_dict[k][2]]
