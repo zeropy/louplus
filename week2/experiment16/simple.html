@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>learning javaScript</title>
+</head>
+
+
+
+<script>
+var name = 'legion'; <!-- 申明变量 -->
+const PI = 3.14; <!-- # 申明常量 -->
+
+  <!-- if条件判断 -->
+  if ( name == 'legion' ) {
+    document.write(name)
+  } else if (PI == 3.14) {
+    document.write(PI)
+  } else {
+    document.write('Oops!')
+  }
+
+<!-- swith/case -->
+  switch(name) {
+  case 'legion':
+    document.write(111);
+    break;
+  case 'yuriko':
+    document.write(222)
+  default:
+    document.write(333)
+    
+  }
+
+<!-- for循环 -->
+  for (i=1;i<10;i++){
+       document.write('number is' + i + "<br>")
+      }
+
+<!-- while循环 -->
+  var i = 0
+  document.write('while cycle<br>')
+  while (i < 10) {
+    i++;
+    document.write('number is ' + i + '<br>')
+  }   
+
+<!-- do while -->
+document.write('do while cycle<br>')
+var i = 0
+do {
+ i++
+ document.write('number is ' + i + '<br>')
+}
+while (i< 10)
+
+<!-- function -->
+
+function test (para1,para2) {
+  document.write('parameter 1 is ' + para1 + '<br>');
+  document.write('parameter 2 is ' + para2 + '<br>');
+  return true;
+}
+test('a','b');
+
+<!-- break and continue -->
+document.write('break and continue<br>')
+for (i=1;i<10;i++) {
+  if (i == 5 || i == 6) continue;
+  if ( i == 8 ) break;
+  document.write(i)
+}
+
+<!-- 匿名函数 -->
+/*
+ 参数 => 语句;
+
+ 参数和语句可以有多个
+
+ (参数1,参数2) => {
+   语句1;
+   语句2;
+ }
+
+数组的map方法,可以将传入的函数作用在数组的每个元素上
+
+[2,3,4,5].map(x => x**2);
+[4,9,16,25]
+*/
+
+/*
+js的对象是可变键值对的集合,类似python中的字典,键可以是任意字符串,
+值可以是除了undefind之外的任意值.
+*/
+document.write('<br>')
+var myObject = {
+  'value': 0,
+  'incremnt': function (count) {
+      this.value += typeof count === 'number' ? count :1;
+      },
+};
+myObject.incremnt()
+document.write('object value is ' + myObject.value + '<br>')
+myObject.incremnt()
+document.write('object value is ' + myObject.value + '<br>')
+
+// 数组
+var fruits = ['apple','orange','banana']
+
+document.write('array length is ' + fruits.length + '<br>')
+document.write('join arrry of blank<br>')
+document.write(fruits.join(' ') + '<br>')
+
+// ES5 中的类
+var Dog = function(name) {
+  this.name = name; //类成员name
+  // 类的构造函数
+};
+
+Dog.prototype.bark = function() {
+    console.log('wangwangwang')
+    //类成员函数bark
+}
+
+var dd = new Dog('Diamod dog');
+dd.bark();
+
+// ES6 中的类
+
+class Dog1 {
+  constructor(name) {
+    this.name = name;
+  } //类似python中的__init__
+
+  bark() {
+    console.log('heiheihei')
+  }
+}
+
+dd = new Dog1('diamod dog')
+dd.bark()
+
+
+</script>
+
+</html>
