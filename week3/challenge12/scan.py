@@ -20,6 +20,9 @@ class Args(object):
         except AddressValueError:
             print('host must specified IPv4Address.')
             exit()
+        if option.port is None:
+            print('Must specified port')
+            exit()
         return option
 
 class Scan(object):
