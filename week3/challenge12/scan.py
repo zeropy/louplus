@@ -31,6 +31,7 @@ class Scan(object):
         sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
         address = (ip,port)
         res = sock.connect_ex(address)
+        sock.close()
         if res == 0:
             print('{} opend'.format(port))
             return None
