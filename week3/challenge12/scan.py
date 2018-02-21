@@ -52,12 +52,16 @@ class Scan(object):
            ports: port or port_range,like 80 or 80-83
         '''
         try:
-            start_port,end_port = ports.split('-')
-            start_port = int(start_port)
-            end_port = int(end_port)
+            if '-' in ports:
+                start_port,end_port = ports.split('-')
+                start_port = int(start_port)
+                end_port = int(end_port)
+            else:
+                start_port = int(ports)
+                end_port = start_port
         except ValueError as e:
-            start_port = int(ports)
-            end_port = start_port
+            print('Parameter Error')
+            exit()
         self.scan_range(ip,start_port,end_port)
 
 
