@@ -16,8 +16,11 @@ def parse(response):
     for comment in response.css('div.comment-list-item'):
         # 使用 xpath 提取 HTML 里的评论者昵称 name 和评论内容 content
         # 并存入字典 result，然后将 result 添加到列表 results 中
-        content = comment.css('div.comment-list-item  div.comment-item-content p::text').extract_first()
-        results.append(content)
+        cbody = comment.css('div.comment-list-item  div.comment-item-body')
+        username = cbody.css('div.user-username a::text').re_first(' +(.+)')
+        content = cbody.css('div.comment-item-content p::text').extract_first()
+        result = {username:content}
+        results.append(result)
 
 # 判断是否有下一页
 def has_next_page(response):
