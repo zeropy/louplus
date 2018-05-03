@@ -23,6 +23,9 @@ def create_app():
         for line in f:
             result += pattern.search(line).group()
     config = json.loads(result)
-    app.config.from_object(config)
+    uconfig = {}
+    for k,v in config.items():
+        uconfig[k.upper()] = v
+    app.config.update(uconfig)
 
     return app
