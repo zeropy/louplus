@@ -5,7 +5,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis, RedisError
 from datetime import datetime
-from rmon.common.rset import RsetException
+from rmon.common.rest import RestException
 from marshmallow import (Schema, fields, validate, post_load,
                          validates_schema, ValidationError)
 
@@ -47,13 +47,13 @@ class Server(db.Model):
         try:
             return self.redis.ping()
         except RedisError:
-            raise RsetException(400, 'redis server %s can not connected' % self.host )
+            raise RestException(400, 'redis server %s can not connected' % self.host )
 
     def get_metrics(self):
         try:
             return self.redis.info()
         except RedisError:
-            raise RsetException(400, 'redis server %s can not connected' % self.host)
+            raise RestException(400, 'redis server %s can not connected' % self.host)
 
     @property
     def redis(self):
@@ -70,8 +70,8 @@ class ServerSchema(Schema):
                          validate=validate.Regexp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'))
     port = fields.Integer(validate=validate.Range(1024,65536))
     password = fields.String()
-    updated_at = fileds.DateTime(dump_only=True)
-    created_at = fileds.DateTime(dump_only=True)
+    updated_at = fields.DateTime(dump_only=True)
+    created_at = fields.DateTime(dump_only=True)
 
     @validates_schema
     def validate_schema(self, data):

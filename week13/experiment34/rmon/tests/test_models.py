@@ -1,5 +1,5 @@
 from rmon.models import Server
-from rmon.common.rset import RsetException
+from rmon.common.rest import RestException
 
 class TestServer(object):
 
@@ -24,7 +24,7 @@ class TestServer(object):
 
         try:
             server.ping()
-        except RsetException as e:
+        except RestException as e:
             assert e.code == 400
             assert e.message == 'redis server %s can not connected' % server.host
 
@@ -36,7 +36,6 @@ class TestServer(object):
         server = Server(name='test',host='127.0.0.1',port='6379')
         try:
             server.get_metrics()
-        except RsetException as e:
+        except RestException as e:
             assert e.code == 400
             assert e.message == 'redis server %s can not connected' % server.host
-

@@ -2,7 +2,7 @@
 # coding=utf-8
 
 import pytest
-import test
+
 from rmon.app import create_app
 from rmon.models import Server
 from rmon.models import db as database
