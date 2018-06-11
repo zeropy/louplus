@@ -94,3 +94,18 @@ class ServerSchema(Schema):
         # 创建服务器时
         if instance is None and server:
             raise ValidationError('Redis server already exist', 'name')
+
+    @post_load
+    def create_or_update(self, data):
+        """数据加载成功后自动创建 Server 对象
+        """
+        instance = self.context.get('instance', None)
+
+        # 创建 Redis 服务器
+        if instance is None:
+            return Server(**data)
+
+        # 更新服务器
+        for key in data:
+            setattr(instance, key, data[key])
+        return instance

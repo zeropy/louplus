@@ -37,7 +37,12 @@ class TestServerList:
         """测试创建 Redis 服务器成功
         """
         # 自行补充
-        pass
+        resp = client.post(url_for(self.endpoint),data=json.dumps(dict(
+                name='legion',host='127.0.0.1',port=6380
+        )),content_type='application/json')
+        assert resp.status_code == 201
+        assert resp.json['ok'] == True
+
 
     def test_create_server_failed_with_invalid_host(self, db, client):
         """无效的服务器地址导致创建 Redis 服务器失败
