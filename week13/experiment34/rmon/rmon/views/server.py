@@ -54,4 +54,4 @@ class ServerDetail(RestView):
 class ServerMetrics(RestView):
     method_decorators = (ObjectMustBeExist(Server),)
     def get(self,object_id):
-        return g.instance.get_metrics()
+        return g.instance.get_metrics(),200

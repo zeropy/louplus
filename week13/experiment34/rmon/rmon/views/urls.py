@@ -16,5 +16,5 @@ api.add_url_rule('/servers/',
                  view_func=ServerList.as_view('server_list'))
 api.add_url_rule('/servers/<int:object_id>',
                  view_func=ServerDetail.as_view('server_detail'))
-api.add_url_rule('/server/<int:server_id>/metrics',
+api.add_url_rule('/server/<int:object_id>/metrics',
                  view_func=ServerMetrics.as_view('server_metrics'))

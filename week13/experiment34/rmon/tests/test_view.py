@@ -136,3 +136,11 @@ class TestServerDetail:
         assert resp.status_code == 404
         assert resp.json['ok'] == False
         assert resp.json['message'] == 'object not exist'
+
+class TestServerMetrics(object):
+    endpoint = 'api.server_metrics'
+    def test_get_metrics(self,server,client):
+        resp = client.get(url_for(self.endpoint,object_id=server.id))
+        server = resp.json
+        assert resp.status_code == 200
+        assert server['redis_version'] == '4.0.8'
