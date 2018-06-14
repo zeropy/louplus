@@ -10,7 +10,7 @@ def create_server(name, host):
     headers = {'Content-Type': 'application/json'}
     data = {'name':name, 'host':host}
     r = requests.post(url,data=json.dumps(data), headers=headers)
-    print(r.content)
+    # print(r.content)
     return r.json()
 
 if __name__ == '__main__':
