@@ -1,5 +1,7 @@
 <template>
     <section>
+        <!-- 导航栏 -->
+        <Menu></Menu>
         <!--工具条-->
         <el-col :span="24" class="toolbar">
             <el-form :inline="true">
@@ -10,7 +12,7 @@
                     <el-button @click="handleSearch">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button @click="handleAdd">添加</el-button>
+                    <el-button @click="handleAdd">添加服务器</el-button>
                 </el-form-item>
             </el-form>
         </el-col>
@@ -249,9 +251,16 @@
                 try {
                     await this.resources.serverDetail.delete({serverId: server.id})
                 } catch (resp) {
+                    let data
+                    try {
+                        data = await resp.json()
+                        message = data.message
+                    } catch(error) {
+                        message =  `服务器 ${server.name} 删除失败`
+                    }
                     this.$message({
-                        message: `服务器 ${server.name} 删除失败`,
-                        type: 'error'
+                        type: 'error',
+                        message: messsage
                     })
                     return
                 }
@@ -285,5 +294,4 @@
 .metric-link {
     text-decoration: none;
 }
-
 </style>

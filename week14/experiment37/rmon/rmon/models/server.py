@@ -1,18 +1,20 @@
-""" rmon.model
+""" rmon.models.server
 
 该模块实现了所有的 model 类以及相应的序列化类
 """
-from flask_sqlalchemy import SQLAlchemy
-from redis import StrictRedis, RedisError
-from datetime import datetime
-from rmon.common.rest import RestException
+
 from marshmallow import (Schema, fields, validate, post_load,
                          validates_schema, ValidationError)
+from redis import StrictRedis, RedisError
 
-db = SQLAlchemy()
+from rmon.common.errors import RedisConnectError
+from rmon.extensions import db
+
+from .base import BaseModel
 
 
-class Server(db.Model):
+
+class Server(BaseModel):
     """Redis服务器模型
     """
 
@@ -25,50 +27,53 @@ class Server(db.Model):
     host = db.Column(db.String(15))
     port = db.Column(db.Integer, default=6379)
     password = db.Column(db.String())
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    def __repr__(self):
-        return '<Server(name=%s)>' % self.name
-
-    def save(self):
-        """保存到数据库中
-        """
-        db.session.add(self)
-        db.session.commit()
-
-    def delete(self):
-        """从数据库中删除
-        """
-        db.session.delete(self)
-        db.session.commit()
-
-    def ping(self):
-        try:
-            return self.redis.ping()
-        except RedisError:
-            raise RestException(400, 'redis server %s can not connected' % self.host )
-
-    def get_metrics(self):
-        try:
-            return self.redis.info()
-        except RedisError:
-            raise RestException(400, 'redis server %s can not connected' % self.host)
 
     @property
     def redis(self):
         return StrictRedis(host=self.host, port=self.port, password=self.password)
 
-class ServerSchema(Schema):
-    """ Redis服务器记录序列化类
-    """
+    def ping(self):
+        """检查 Redis 服务器是否可以访问
+        """
+        try:
+            return self.redis.ping()
+        except RedisError:
+            raise RedisConnectError(400, 'redis server %s can not connected' % self.host)
 
+    @property
+    def status(self):
+        """服务器当前状态
+        """
+        status = 'error'
+        try:
+            if self.ping():
+                status = 'ok'
+        except RedisConnectError:
+            pass
+        return status
+
+    def get_metrics(self):
+        """获取 Redis 服务器监控信息
+
+        通过 Redis 服务器指令 INFO 返回监控信息, 参考 https://redis.io/commands/INFO
+        """
+        try:
+            # TODO 新版本的 Redis 服务器支持查看某一 setion 的信息，不必返回所有信息
+            return self.redis.info()
+        except RedisError:
+            raise RedisConnectError(400, 'redis server %s can not connected' % self.host)
+
+
+class ServerSchema(Schema):
+    """Redis服务器记录序列化类
+    """
     id = fields.Integer(dump_only=True)
-    name = fields.String(required=True,validate=validate.Length(2,64))
-    description = fields.String(validate=validate.Length(0,512))
+    name = fields.String(required=True, validate=validate.Length(2, 64))
+    description = fields.String(validate=validate.Length(0, 512))
+    # host 必须是 IP v4 地址
     host = fields.String(required=True,
-                         validate=validate.Regexp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'))
-    port = fields.Integer(validate=validate.Range(1024,65536))
+                         validate=validate.Regexp(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$'))
+    port = fields.Integer(validate=validate.Range(1024, 65536))
     password = fields.String()
     updated_at = fields.DateTime(dump_only=True)
     created_at = fields.DateTime(dump_only=True)
@@ -82,6 +87,11 @@ class ServerSchema(Schema):
 
         instance = self.context.get('instance', None)
 
+        # 由于更新服务器时通过 partial=True 加载数据，会忽略对缺失字段的验证
+        # 所以需要判断 name 字段是否存在
+        if 'name' not in data:
+            return
+
         server = Server.query.filter_by(name=data['name']).first()
 
         if server is None:
@@ -89,11 +99,11 @@ class ServerSchema(Schema):
 
         # 更新服务器时
         if instance is not None and server != instance:
-            raise ValidationError('Redis server already exist', 'name')
+            raise ValidationError('redis server already exist', 'name')
 
         # 创建服务器时
         if instance is None and server:
-            raise ValidationError('Redis server already exist', 'name')
+            raise ValidationError('redis server already exist', 'name')
 
     @post_load
     def create_or_update(self, data):
@@ -109,3 +119,4 @@ class ServerSchema(Schema):
         for key in data:
             setattr(instance, key, data[key])
         return instance
+

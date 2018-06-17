@@ -1,18 +1,30 @@
+""" rmon.views.host
+
+实现了所有的视图控制器
+"""
+
 from flask import request, g
+
 from rmon.common.rest import RestView
 from rmon.models import Server, ServerSchema
-from rmon.common.decorators import ObjectMustBeExist
+
+from .decorators import ObjectMustBeExist, TokenAuthenticate
+
 
 class ServerList(RestView):
     """Redis 服务器列表
     """
 
+    method_decorators = (TokenAuthenticate(), )
+
     def get(self):
+        """获取 Redis 列表
+        """
         servers = Server.query.all()
-        return ServerSchema().dump(servers,many=True).data
+        return ServerSchema().dump(servers, many=True).data
 
     def post(self):
-        """创建Redis服务器
+        """创建 Redis 实例
         """
         data = request.get_json()
         server, errors = ServerSchema().load(data)
@@ -20,16 +32,17 @@ class ServerList(RestView):
             return errors, 400
         server.ping()
         server.save()
-        return {'ok':True}, 201
+        return {'ok': True}, 201
+
 
 class ServerDetail(RestView):
     """ Redis 服务器列表
     """
 
-    method_decorators = (ObjectMustBeExist(Server), )
+    method_decorators = (TokenAuthenticate(), ObjectMustBeExist(Server))
 
     def get(self, object_id):
-        """获取服务器详情
+        """
         """
         data, _ = ServerSchema().dump(g.instance)
         return data
@@ -51,7 +64,27 @@ class ServerDetail(RestView):
         g.instance.delete()
         return {'ok': True}, 204
 
+
 class ServerMetrics(RestView):
-    method_decorators = (ObjectMustBeExist(Server),)
-    def get(self,object_id):
-        return g.instance.get_metrics(),200
+    """获取服务器监控信息
+    """
+    method_decorators = (TokenAuthenticate(), ObjectMustBeExist(Server))
+
+    def get(self, object_id):
+        """获取监控信息
+        TODO 如何限制访问频率
+        """
+        return g.instance.get_metrics()
+
+
+class ServerCommand(RestView):
+    """执行命令
+    """
+
+    method_decorators = (TokenAuthenticate(), ObjectMustBeExist(Server))
+
+    def post(self, object_id):
+        """执行 Redis 命令
+        TODO 命令参数如何解析
+        """
+        pass

@@ -1,9 +1,0 @@
-[
-  "test_models.py::TestServer::()::test_save",
-  "test_models.py::TestServer::()::test_delete",
-  "test_models.py::TestServer::()::test_ping_success",
-  "test_models.py::TestServer::()::test_ping_failed",
-  "test_models.py::TestServer::()::test_get_metrics_success",
-  "test_models.py::TestServer::()::test_get_metrics_failed",
-  "test_sample.py::test_inc"
-]

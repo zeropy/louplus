@@ -1,13 +1,18 @@
+""" rmon.common.rest
+
+该模块实现了 restful 相关的相关类型，主要包含 RestView 类型。
+RestView 实现了 restful 视图基类，基于该基类实现视图控制器时，执行结果将被序列化为 json
+响应。
+"""
 from collections import Mapping
-from flask import request, Response, make_response
+
+from flask import request, make_response
 from flask.json import dumps
 from flask.views import MethodView
+from werkzeug.wrappers import Response
 
-class RestException(BaseException):
-    def __init__(self, code, message):
-        self.code = code
-        self.message = message
-        super(RestException,self).__init__()
+from .errors import RestError
+
 
 class RestView(MethodView):
     """自定义 View 类
@@ -51,7 +56,7 @@ class RestView(MethodView):
 
         try:
             resp = method(*args, **kwargs)
-        except RestException as e:
+        except RestError as e:
             resp = self.handler_error(e)
 
         # 如果返回结果已经是 HTTP 响应则直接返回
